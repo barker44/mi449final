@@ -1,6 +1,6 @@
-import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Navbar, Container, Nav, Form, Row, Col, Button} from 'react-bootstrap';
+import './theme.css';
+import {Navbar, Container, Nav, Form, Row, Col, Button, Card} from 'react-bootstrap';
 import {useState, useEffect} from 'react';
 import TaskCard from './taskCard'
 import { supabase } from './client'
@@ -22,6 +22,7 @@ function App() {
     const firstName = event.target.first_name.value
 
     setMessage(`Hi there, ${firstName}!`);
+    localStorage.setItem("name_val4", firstName); //
 
     event.target.reset()
     setShow(!show)
@@ -31,7 +32,12 @@ function App() {
     getTasks();
   }, [])
 
-  async function getActivities() {
+  useEffect(() => {
+    setMessage(`Hi there, ${localStorage.getItem("name_val4")}!`); // https://blog.logrocket.com/using-localstorage-react-hooks/
+    setShow(!show)
+  }, []);
+
+  async function getActivities() { // https://stackoverflow.com/questions/62709706/how-do-i-get-a-random-element-from-an-array-when-a-button-is-clicked
     const { data, error} = await supabase
       .from('media')
       .select("*")
@@ -76,17 +82,16 @@ function App() {
     <>
     <Navbar>
       <Container>
-        <Navbar.Brand>Tasks</Navbar.Brand>
-        <Nav>
-          <Nav.Item>Created by Sara Barker</Nav.Item> 
-        </Nav>
+        <Navbar.Brand>Personal Activity Dashboard</Navbar.Brand>
       </Container> 
     </Navbar>
     <Container>
       <Row>
-        <Col>
+        <Col md = {{ span: 4, offset: 4 }} lg = {{ span: 8, offset: 2 }}>
+        <Card className = "col-md-6 mx-auto mb-2" >
+          <Card.Body >
     {!show && (
-    <form onSubmit = {handleSubmit} className = "col-md-2 mx-auto"> 
+    <form onSubmit = {handleSubmit} className = "col-md-10"> 
       <Form.Label>What's your name?</Form.Label>
       <Form.Control
       type = "text"
@@ -96,10 +101,15 @@ function App() {
       </form>
       )}
       <h2 className = "text-center">{message}</h2>
+      </Card.Body>
+      </Card>
       </Col>
       </Row>
+      {message && (
       <Row>
         <Col>
+        <Card className = "col-md-12">
+          <Card.Body>
         <h3>Create Task</h3>
         <Form.Label>Task Name</Form.Label>
         <Form.Control
@@ -121,26 +131,36 @@ function App() {
         <TaskCard task = {task}/>
         </Col>
         ))}
+        </Card.Body>
+        </Card>
       </Col>
+      <Card className = "col-md-6">
+        <Card.Body>
       <Col>
-      <Button onClick = {getActivities} className = "d-block mx-auto">Want something to do?</Button>
+      <Button onClick = {getActivities} className = "d-block mx-auto">Want something to do? Click me!</Button>
         {randomActivity && 
         <>
             <img className = "d-block mx-auto"
             src = {randomActivity.img_url}
+            alt = {randomActivity.alt_txt}
             style = {{
               width: '300px',
               height: '450px'
             }}/>
+            <Button size = "sm" className = "d-block mx-auto"><a href = {randomActivity.source_link} target="_blank">Image Source</a></Button>
             <h1 className = "text-center">{randomActivity.title}</h1>
             <h2 className = "text-center">{randomActivity.media_type}</h2>
             </>
         }
-        </Col>
-        
-      </Row>
 
+        
+        </Col>
+        </Card.Body>
+        </Card>
+      </Row>
+      )}
     </Container>
+    
     </>
   );
 }

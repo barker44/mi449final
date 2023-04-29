@@ -39,15 +39,16 @@ function TaskCard(props){ // used this video as a tutorial and inspiration: http
             alert(error.message);
           }
     }
+
     return (
-        <Card style={{width:"18rem"}}>
+        <Card style={{width:"18rem"}}> 
             <Card.Body>
                 {editing == false ?
                 <>
                 <Card.Title>{task.name}</Card.Title>
                 <Card.Text>{task.description}</Card.Text>
-                <Button variant='secondary' onClick = {() => setEditing(true)}>Edit Task</Button>
-                <Button variant='danger' onClick = {() => deleteTask()}>Delete Task</Button>
+                <Button variant='outline-dark' size = "sm" onClick = {() => setEditing(true)}>Edit</Button>
+                <Button variant='outline-danger' size = "sm" onClick = {() => deleteTask()}>Delete</Button>
                 </>
             :
                 <>
